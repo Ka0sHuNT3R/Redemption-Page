@@ -34,15 +34,16 @@
 </head>
 <body>
 
-    <form id="redemption-form">
+    <form id="redemption-form" action="YOUR_WEB_APP_URL" method="POST">
         <label for="name">Select Name:</label>
-        <select id="name" required>
+        <select id="name" name="name" required>
             <option value="Jaxon">Jaxon</option>
             <option value="Miles">Miles</option>
+            <!-- Add more users here as needed -->
         </select>
         
         <label for="points">Points to Redeem:</label>
-        <input type="number" id="points" placeholder="Enter points" required>
+        <input type="number" id="points" name="points" placeholder="Enter points" required>
         
         <button type="submit">Redeem Points</button>
     </form>
@@ -59,11 +60,27 @@
                 return;
             }
 
-            // Here you can handle the redemption logic, e.g., sending data to your server or updating the spreadsheet.
-            alert(`Redeemed ${points} points for ${name}!`);
-
-            // Reset the form
-            this.reset();
+            // Sending data to Google Apps Script
+            fetch("YOUR_WEB_APP_URL", {
+                method: "POST",
+                body: new URLSearchParams({
+                    name: name,
+                    points: points
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result === 'Success') {
+                    alert(`Redeemed ${points} points for ${name}!`);
+                    this.reset(); // Reset the form
+                } else {
+                    alert('Redemption failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again later.');
+            });
         });
     </script>
 </body>
